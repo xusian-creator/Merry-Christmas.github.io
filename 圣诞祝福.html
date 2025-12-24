@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圣诞快乐 | 小安给小凡的专属祝福</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: linear-gradient(to bottom, #0a2342 0%, #1a3c5e 30%, #0d2b4e 100%);
+            color: white;
+            cursor: default;
+        }
+        
+        .scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.8s ease;
+        }
+        
+        /* 雪夜场景样式 */
+        #snow-scene {
+            display: block;
+        }
+        
+        /* 雪花效果 */
+        .snowflakes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .snowflake {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        /* 地面 */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(to top, #0d351c 0%, #1a5c2c 30%, #0f4020 100%);
+            z-index: 2;
+        }
+        
+        /* 圣诞树 */
+        .tree-container {
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+        }
+        
+        .tree {
+            position: relative;
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 100px solid #0a5c1a;
+            margin-bottom: 10px;
+        }
+        
+        .tree:before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: -50px;
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 80px solid #0b6e1e;
+        }
+        
+        .tree:after {
+            content: '';
+            position: absolute;
+            top: 60px;
+            left: -40px;
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 60px solid #0d8223;
+        }
+        
+        .trunk {
+            position: absolute;
+            bottom: -30px;
+            left: -10px;
+            width: 20px;
+            height: 30px;
+            background-color: #8B4513;
+        }
+        
+        /* 圣诞树装饰 */
+        .ornament {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            z-index: 4;
+        }
+        
+        .ornament.red { background-color: #ff3838; box-shadow: 0 0 8px #ff3838; }
+        .ornament.blue { background-color: #18dcff; box-shadow: 0 0 8px #18dcff; }
+        .ornament.gold { background-color: #ffaf40; box-shadow: 0 0 8px #ffaf40; }
+        .ornament.silver { background-color: #c8d6e5; box-shadow: 0 0 8px #c8d6e5; }
+        
+        /* 礼盒 */
+        .gift-box {
+            position: absolute;
+            bottom: 180px;
+            left: calc(50% + 100px);
+            width: 60px;
+            height: 40px;
+            background: linear-gradient(45deg, #ff3838 0%, #ff4d4d 100%);
+            border-radius: 8px;
+            z-index: 5;
+            cursor: pointer;
+            transform-origin: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3), 0 0 20px rgba(255, 56, 56, 0.5);
+        }
+        
+        .gift-box:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 25px rgba(255, 56, 56, 0.7);
+        }
+        
+        .gift-box:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background-color: #0a5c1a;
+            transform: translateY(-50%);
+        }
+        
+        .gift-box:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 10px;
+            height: 100%;
+            background-color: #0a5c1a;
+            transform: translateX(-50%);
+        }
+        
+        .gift-box .bow {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background-color: #0a5c1a;
+            transform: translateX(-50%) rotate(45deg);
+            border-radius: 3px;
+        }
+        
+        /* 指引文字 */
+        .instruction {
+            position: absolute;
+            bottom: 230px;
+            left: calc(50% + 100px);
+            width: 200px;
+            padding: 10px 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            text-align: center;
+            font-size: 16px;
+            z-index: 6;
+            transform: translateX(-50%);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: float 3s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+        
+        /* 心愿输入界面 */
+        #wish-scene {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10;
+        }
+        
+        .wish-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .wish-container h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #ffde7d;
+            text-shadow: 0 0 10px rgba(255, 222, 125, 0.5);
+        }
+        
+        .wish-container p {
+            margin-bottom: 30px;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+        .wish-input {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 18px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .wish-input:focus {
+            border-color: #ffde7d;
+        }
+        
+        .wish-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .next-btn {
+            background: linear-gradient(to right, #ff9a00, #ff3838);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 56, 56, 0.4);
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 56, 56, 0.6);
+        }
+        
+        /* 礼物界面 */
+        #gift-scene {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10;
+        }
+        
+        .heart-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .heart {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            background-color: #ff3838;
+            transform: rotate(45deg);
+            box-shadow: 0 0 50px rgba(255, 56, 56, 0.8);
+            animation: heartbeat 1.2s infinite;
+        }
+        
+        .heart:before,
+        .heart:after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background-color: #ff3838;
+            border-radius: 50%;
+        }
+        
+        .heart:before {
+            top: -100px;
+            left: 0;
+        }
+        
+        .heart:after {
+            top: 0;
+            left: -100px;
+        }
+        
+        .heart-text {
+            position: absolute;
+            transform: rotate(-45deg);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 2;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            animation: textPulse 1.5s infinite alternate;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: rotate(45deg) scale(1); }
+            25% { transform: rotate(45deg) scale(1.1); }
+            50% { transform: rotate(45deg) scale(1.05); }
+            75% { transform: rotate(45deg) scale(1.15); }
+        }
+        
+        @keyframes textPulse {
+            0% { opacity: 0.9; transform: rotate(-45deg) scale(0.95); }
+            100% { opacity: 1; transform: rotate(-45deg) scale(1.05); }
+        }
+        
+        .gift-message {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 20px;
+            color: #ffde7d;
+            text-shadow: 0 0 10px rgba(255, 222, 125, 0.5);
+            max-width: 80%;
+        }
+        
+        .return-hint {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+        }
+        
+        /* 后台提示 */
+        .backend-notice {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 100;
+            color: #aaa;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .gift-box {
+                left: calc(50% + 60px);
+            }
+            
+            .instruction {
+                left: calc(50% + 60px);
+                width: 180px;
+                font-size: 14px;
+            }
+            
+            .heart-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .heart {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .heart:before,
+            .heart:after {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .heart:before {
+                top: -75px;
+            }
+            
+            .heart:after {
+                left: -75px;
+            }
+            
+            .heart-text {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 雪夜场景 -->
+    <div id="snow-scene" class="scene">
+        <div class="snowflakes" id="snowflakes"></div>
+        
+        <div class="tree-container">
+            <div class="tree">
+                <div class="trunk"></div>
+            </div>
+        </div>
+        
+        <!-- 圣诞树装饰 -->
+        <div id="ornaments-container"></div>
+        
+        <!-- 礼盒 -->
+        <div class="gift-box" id="gift-box">
+            <div class="bow"></div>
+        </div>
+        
+        <!-- 指引文字 -->
+        <div class="instruction">点击礼盒，获得宝宝的专属礼物</div>
+        
+        <div class="ground"></div>
+    </div>
+    
+    <!-- 心愿输入界面 -->
+    <div id="wish-scene" class="scene">
+        <div class="wish-container">
+            <h2>🎁 写下你的圣诞心愿 🎁</h2>
+            <p>亲爱的宝宝，在这个特别的圣诞夜，<br>许下你的心愿，让它随着雪花飘向圣诞老人吧！</p>
+            <textarea class="wish-input" id="wish-input" placeholder="在这里写下你的圣诞心愿..."></textarea>
+            <button class="next-btn" id="submit-wish">下一步，查看礼物</button>
+        </div>
+    </div>
+    
+    <!-- 礼物界面 -->
+    <div id="gift-scene" class="scene">
+        <div class="heart-container">
+            <div class="heart"></div>
+            <div class="heart-text">小安 ❤️ 小凡</div>
+        </div>
+        <div class="gift-message">宝宝，这是给你的专属圣诞礼物！<br>愿我们的爱如这跳动的心，永远充满活力与温暖。</div>
+        <div class="return-hint">点击屏幕任意位置返回雪景</div>
+    </div>
+    
+    <!-- 后台提示 -->
+    <div class="backend-notice">心愿已保存到后台</div>
+
+    <script>
+        // 生成雪花
+        function createSnowflakes() {
+            const snowflakesContainer = document.getElementById('snowflakes');
+            const snowflakeCount = 100;
+            
+            for (let i = 0; i < snowflakeCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                
+                // 随机大小
+                const size = Math.random() * 5 + 2;
+                snowflake.style.width = `${size}px`;
+                snowflake.style.height = `${size}px`;
+                
+                // 随机起始位置
+                snowflake.style.left = `${Math.random() * 100}%`;
+                snowflake.style.top = `${Math.random() * 100}%`;
+                
+                // 随机透明度
+                snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+                
+                // 随机动画延迟和持续时间
+                const delay = Math.random() * 5;
+                const duration = Math.random() * 10 + 10;
+                
+                snowflake.style.animation = `fall ${duration}s linear ${delay}s infinite`;
+                
+                snowflakesContainer.appendChild(snowflake);
+            }
+            
+            // 添加雪花飘落动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fall {
+                    0% {
+                        transform: translateY(-100px) translateX(0) rotate(0deg);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translateY(100vh) translateX(${Math.random() * 100 - 50}px) rotate(${Math.random() * 360}deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // 生成圣诞树装饰
+        function createOrnaments() {
+            const ornamentsContainer = document.getElementById('ornaments-container');
+            const ornamentColors = ['red', 'blue', 'gold', 'silver'];
+            
+            // 在圣诞树上生成装饰球
+            const ornamentPositions = [
+                {top: '30%', left: '50%'},
+                {top: '40%', left: '30%'},
+                {top: '40%', left: '70%'},
+                {top: '55%', left: '20%'},
+                {top: '55%', left: '80%'},
+                {top: '70%', left: '40%'},
+                {top: '70%', left: '60%'},
+                {top: '85%', left: '50%'},
+            ];
+            
+            ornamentPositions.forEach(pos => {
+                const ornament = document.createElement('div');
+                ornament.classList.add('ornament');
+                ornament.classList.add(ornamentColors[Math.floor(Math.random() * ornamentColors.length)]);
+                ornament.style.top = pos.top;
+                ornament.style.left = pos.left;
+                ornament.style.transform = 'translate(-50%, -50%)';
+                
+                // 添加闪烁效果
+                ornament.style.animation = `twinkle ${Math.random() * 2 + 1}s infinite alternate`;
+                ornamentsContainer.appendChild(ornament);
+            });
+            
+            // 添加闪烁动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes twinkle {
+                    0% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+                    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // 切换到心愿输入界面
+        function showWishScene() {
+            document.getElementById('snow-scene').style.display = 'none';
+            document.getElementById('wish-scene').style.display = 'flex';
+        }
+        
+        // 切换到礼物界面
+        function showGiftScene() {
+            const wishText = document.getElementById('wish-input').value.trim();
+            
+            // 保存心愿到"后台"（这里使用localStorage模拟，实际应用中应发送到服务器）
+            if (wishText) {
+                saveWishToBackend(wishText);
+            }
+            
+            document.getElementById('wish-scene').style.display = 'none';
+            document.getElementById('gift-scene').style.display = 'flex';
+        }
+        
+        // 返回到雪景界面
+        function returnToSnowScene() {
+            document.getElementById('gift-scene').style.display = 'none';
+            document.getElementById('snow-scene').style.display = 'block';
+        }
+        
+        // 保存心愿到后台（模拟）
+        function saveWishToBackend(wish) {
+            // 在实际应用中，这里应该发送一个AJAX请求到服务器
+            // 这里我们使用localStorage来模拟存储
+            const wishes = JSON.parse(localStorage.getItem('christmasWishes')) || [];
+            const timestamp = new Date().toISOString();
+            wishes.push({wish, timestamp});
+            localStorage.setItem('christmasWishes', JSON.stringify(wishes));
+            
+            // 显示后台提示
+            const notice = document.querySelector('.backend-notice');
+            notice.textContent = `心愿已保存: "${wish.substring(0, 20)}${wish.length > 20 ? '...' : ''}"`;
+            notice.style.color = '#4cd137';
+            notice.style.transition = 'all 0.3s';
+            
+            setTimeout(() => {
+                notice.textContent = '心愿已保存到后台';
+                notice.style.color = '#aaa';
+            }, 3000);
+            
+            // 在实际应用中，应该发送到服务器：
+            // fetch('https://your-backend-api.com/save-wish', {
+            //     method: 'POST',
+            //     headers: {'Content-Type': 'application/json'},
+            //     body: JSON.stringify({wish, timestamp})
+            // });
+            
+            console.log('心愿已保存到后台:', {wish, timestamp});
+        }
+        
+        // 获取已保存的心愿（模拟后台查看功能）
+        function getSavedWishes() {
+            const wishes = JSON.parse(localStorage.getItem('christmasWishes')) || [];
+            console.log('所有已保存的心愿:', wishes);
+            return wishes;
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 创建雪花
+            createSnowflakes();
+            
+            // 创建圣诞树装饰
+            createOrnaments();
+            
+            // 礼盒点击事件
+            document.getElementById('gift-box').addEventListener('click', showWishScene);
+            
+            // 提交心愿按钮点击事件
+            document.getElementById('submit-wish').addEventListener('click', () => {
+                const wishText = document.getElementById('wish-input').value.trim();
+                if (wishText) {
+                    showGiftScene();
+                } else {
+                    alert('请先写下你的圣诞心愿哦！');
+                    document.getElementById('wish-input').focus();
+                }
+            });
+            
+            // 点击礼物界面任意位置返回雪景
+            document.getElementById('gift-scene').addEventListener('click', returnToSnowScene);
+            
+            // 允许按Enter键提交心愿
+            document.getElementById('wish-input').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    document.getElementById('submit-wish').click();
+                }
+            });
+            
+            // 显示已保存的心愿数量（仅用于演示）
+            const wishes = getSavedWishes();
+            if (wishes.length > 0) {
+                console.log(`已有 ${wishes.length} 个心愿被保存`);
+            }
+            
+            // 添加星星背景
+            createStars();
+        });
+        
+        // 创建背景星星
+        function createStars() {
+            const snowScene = document.getElementById('snow-scene');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.style.position = 'absolute';
+                star.style.width = `${Math.random() * 3 + 1}px`;
+                star.style.height = star.style.width;
+                star.style.backgroundColor = 'white';
+                star.style.borderRadius = '50%';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 70}%`;
+                star.style.opacity = `${Math.random() * 0.7 + 0.3}`;
+                star.style.animation = `twinkle ${Math.random() * 5 + 3}s infinite alternate`;
+                snowScene.appendChild(star);
+            }
+        }
+    </script>
+</body>
+</html>
